@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>App Redirect</title>
+    <script>
+        // Set your app details
+        const appConfig = {
+            androidPackageName: "com.kiloo.subwaysurf",
+            iosAppId: "512939461",
+            appName: "Subway Surfers"
+        };
+        
+        // Get the current path and query parameters
+        const currentPath = window.location.pathname;
+        const queryParams = window.location.search;
+        
+        // Function to detect the platform
+        function getMobileOperatingSystem() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            if (/android/i.test(userAgent)) {
+                return 'Android';
+            }
+            
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return 'iOS';
+            }
+            
+            return 'unknown';
+        }
+        
+        // Function to redirect to app store
+        function redirectToStore() {
+            const os = getMobileOperatingSystem();
+            
+            if (os === 'Android') {
+                window.location.href = `https://play.google.com/store/apps/details?id=${appConfig.androidPackageName}`;
+            } else if (os === 'iOS') {
+                window.location.href = `https://apps.apple.com/app/id${appConfig.iosAppId}`;
+            } else {
+                // Handle desktop or unknown platforms
+                document.getElementById('content').innerHTML = `<p>Please download ${appConfig.appName} from your device's app store.</p>`;
+            }
+        }
+        
+        // Function to try opening the app
+        function tryOpenApp() {
+            // Construct the deep link URL
+            const deepLink = `arrayworld://${currentPath.substring(1)}${queryParams}`;
+            
+            // Try to open the app
+            window.location.href = deepLink;
+            
+            // Set a timeout to redirect to the app store if the app doesn't open
+            setTimeout(redirectToStore, 1500);
+        }
+        
+        // Start the process when the page loads
+        window.onload = tryOpenApp;
+    </script>
+</head>
+
+</html>
